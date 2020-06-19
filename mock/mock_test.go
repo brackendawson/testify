@@ -1311,6 +1311,29 @@ func Test_Arguments_Returns_WithValueLengthMismatch(t *testing.T) {
 
 }
 
+func Benchmark_Arguments_Returns_Vs_GetAndError(b *testing.B) {
+
+	var (
+		args = Arguments([]interface{}{&ExampleType{}, nil})
+		e    *ExampleType
+		err  error
+	)
+
+	b.Run("Returns", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			args.Returns(&e, &err)
+		}
+	})
+
+	b.Run("Get", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			e = args.Get(0).(*ExampleType)
+			err = args.Error(1)
+		}
+	})
+
+}
+
 func Test_Arguments_Is(t *testing.T) {
 
 	var args = Arguments([]interface{}{"string", 123, true})
