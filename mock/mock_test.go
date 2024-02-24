@@ -3,6 +3,7 @@ package mock
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"runtime"
 	"sync"
@@ -2146,3 +2147,97 @@ type user interface {
 type mockUser struct{ Mock }
 
 func (m *mockUser) Use(c caller) { m.Called(c) }
+
+func TestExpectedArgIsSameStructPointer(t *testing.T) {
+	type Data struct {
+		N int
+	}
+
+	// Code under test receives references to instances of d
+	f := func(s Sender, ds ...*Data) {
+		for _, d := range ds {
+			d := d
+			// starts a new goroutine
+			go func() {
+				// makes an unpredictable mutation to it
+				d.N = rand.Int()
+				// then uses it in a call to a mock which has d in its
+				// expectations
+				s.Send(d)
+			}()
+		}
+	}
+
+	ds := []*Data{{}, {}}
+
+	m := &mockSender{}
+	defer m.AssertExpectations(t)
+
+	wg := &sync.WaitGroup{}
+	wg.Add(len(ds))
+	for _, d := range ds {
+		d := d
+		m.On("Send", d).Run(func(args Arguments) {
+			wg.Done()
+		}).Return().Once()
+	}
+
+	f(m, ds...)
+
+	wg.Wait()
+}
+
+func TestExpectedArgIsSameNestedPointers(t *testing.T) {
+	type Data struct {
+		N int
+	}
+	type Pointers struct {
+		D *Data
+		S []int
+		M map[string]int
+	}
+
+	f := func(s Sender, ps ...Pointers) {
+		for _, p := range ps {
+			p := p
+			go func() {
+				p.D.N = rand.Int()
+				p.S[0] = rand.Int()
+				p.M[""] = rand.Int()
+				s.Send(p)
+			}()
+		}
+	}
+
+	ps := []Pointers{
+		{D: &Data{}, S: make([]int, 1), M: make(map[string]int)},
+	}
+
+	m := &mockSender{}
+	defer m.AssertExpectations(t)
+
+	wg := &sync.WaitGroup{}
+	wg.Add(len(ps))
+	for _, p := range ps {
+		p := p
+		m.On("Send", p).Run(func(args Arguments) {
+			wg.Done()
+		}).Return().Once()
+	}
+
+	f(m, ps...)
+
+	wg.Wait()
+}
+
+type Sender interface {
+	Send(interface{})
+}
+
+type mockSender struct {
+	Mock
+}
+
+func (m *mockSender) Send(d interface{}) {
+	m.Called(d)
+}

@@ -928,8 +928,11 @@ func (args Arguments) Diff(objects []interface{}) (string, int) {
 	}
 
 	for i := 0; i < maxArgCount; i++ {
-		var actual, expected interface{}
-		var actualFmt, expectedFmt string
+		var (
+			actual, expected interface{}
+			actualFmt        string
+			expectedFmt      func() string
+		)
 
 		if len(objects) <= i {
 			actual = "(Missing)"
@@ -941,10 +944,10 @@ func (args Arguments) Diff(objects []interface{}) (string, int) {
 
 		if len(args) <= i {
 			expected = "(Missing)"
-			expectedFmt = "(Missing)"
+			expectedFmt = func() string { return "(Missing)" }
 		} else {
 			expected = args[i]
-			expectedFmt = fmt.Sprintf("(%[1]T=%[1]v)", expected)
+			expectedFmt = func() string { return fmt.Sprintf("(%[1]T=%[1]v)", expected) }
 		}
 
 		if matcher, ok := expected.(argumentMatcher); ok {
@@ -1005,11 +1008,11 @@ func (args Arguments) Diff(objects []interface{}) (string, int) {
 			default:
 				if assert.ObjectsAreEqual(expected, Anything) || assert.ObjectsAreEqual(actual, Anything) || assert.ObjectsAreEqual(actual, expected) {
 					// match
-					output = fmt.Sprintf("%s\t%d: PASS:  %s == %s\n", output, i, actualFmt, expectedFmt)
+					output = fmt.Sprintf("%s\t%d: PASS:  %s == %s\n", output, i, actualFmt, expectedFmt())
 				} else {
 					// not match
 					differences++
-					output = fmt.Sprintf("%s\t%d: FAIL:  %s != %s\n", output, i, actualFmt, expectedFmt)
+					output = fmt.Sprintf("%s\t%d: FAIL:  %s != %s\n", output, i, actualFmt, expectedFmt())
 				}
 			}
 		}
