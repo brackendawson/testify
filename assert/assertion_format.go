@@ -829,7 +829,7 @@ func YAMLEqf(t TestingT, expected string, actual string, msg string, args ...int
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
-	return YAMLEq(t, expected, actual, append([]interface{}{msg}, args...)...)
+	return YAMLEqNew(t, expected, actual, append([]interface{}{msg}, args...)...)
 }
 
 // Zerof asserts that i is the zero value for its type.

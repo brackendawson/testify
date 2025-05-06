@@ -2377,12 +2377,12 @@ func TestJSONEq_ArraysOfDifferentOrder(t *testing.T) {
 
 func TestYAMLEq_EqualYAMLString(t *testing.T) {
 	mockT := new(testing.T)
-	True(t, YAMLEq(mockT, `{"hello": "world", "foo": "bar"}`, `{"hello": "world", "foo": "bar"}`))
+	True(t, YAMLEqNew(mockT, `{"hello": "world", "foo": "bar"}`, `{"hello": "world", "foo": "bar"}`))
 }
 
 func TestYAMLEq_EquivalentButNotEqual(t *testing.T) {
 	mockT := new(testing.T)
-	True(t, YAMLEq(mockT, `{"hello": "world", "foo": "bar"}`, `{"foo": "bar", "hello": "world"}`))
+	True(t, YAMLEqNew(mockT, `{"hello": "world", "foo": "bar"}`, `{"foo": "bar", "hello": "world"}`))
 }
 
 func TestYAMLEq_HashOfArraysAndHashes(t *testing.T) {
@@ -2412,42 +2412,42 @@ array:
   - "string"
   - ["nested", "array", 5.5]
 `
-	True(t, YAMLEq(mockT, expected, actual))
+	True(t, YAMLEqNew(mockT, expected, actual))
 }
 
 func TestYAMLEq_Array(t *testing.T) {
 	mockT := new(testing.T)
-	True(t, YAMLEq(mockT, `["foo", {"hello": "world", "nested": "hash"}]`, `["foo", {"nested": "hash", "hello": "world"}]`))
+	True(t, YAMLEqNew(mockT, `["foo", {"hello": "world", "nested": "hash"}]`, `["foo", {"nested": "hash", "hello": "world"}]`))
 }
 
 func TestYAMLEq_HashAndArrayNotEquivalent(t *testing.T) {
 	mockT := new(testing.T)
-	False(t, YAMLEq(mockT, `["foo", {"hello": "world", "nested": "hash"}]`, `{"foo": "bar", {"nested": "hash", "hello": "world"}}`))
+	False(t, YAMLEqNew(mockT, `["foo", {"hello": "world", "nested": "hash"}]`, `{"foo": "bar", {"nested": "hash", "hello": "world"}}`))
 }
 
 func TestYAMLEq_HashesNotEquivalent(t *testing.T) {
 	mockT := new(testing.T)
-	False(t, YAMLEq(mockT, `{"foo": "bar"}`, `{"foo": "bar", "hello": "world"}`))
+	False(t, YAMLEqNew(mockT, `{"foo": "bar"}`, `{"foo": "bar", "hello": "world"}`))
 }
 
 func TestYAMLEq_ActualIsSimpleString(t *testing.T) {
 	mockT := new(testing.T)
-	False(t, YAMLEq(mockT, `{"foo": "bar"}`, "Simple String"))
+	False(t, YAMLEqNew(mockT, `{"foo": "bar"}`, "Simple String"))
 }
 
 func TestYAMLEq_ExpectedIsSimpleString(t *testing.T) {
 	mockT := new(testing.T)
-	False(t, YAMLEq(mockT, "Simple String", `{"foo": "bar", "hello": "world"}`))
+	False(t, YAMLEqNew(mockT, "Simple String", `{"foo": "bar", "hello": "world"}`))
 }
 
 func TestYAMLEq_ExpectedAndActualSimpleString(t *testing.T) {
 	mockT := new(testing.T)
-	True(t, YAMLEq(mockT, "Simple String", "Simple String"))
+	True(t, YAMLEqNew(mockT, "Simple String", "Simple String"))
 }
 
 func TestYAMLEq_ArraysOfDifferentOrder(t *testing.T) {
 	mockT := new(testing.T)
-	False(t, YAMLEq(mockT, `["foo", {"hello": "world", "nested": "hash"}]`, `[{ "hello": "world", "nested": "hash"}, "foo"]`))
+	False(t, YAMLEqNew(mockT, `["foo", {"hello": "world", "nested": "hash"}]`, `[{ "hello": "world", "nested": "hash"}, "foo"]`))
 }
 
 type diffTestingStruct struct {

@@ -11,8 +11,8 @@
 //
 // Alternative implementations are selected using build tags:
 //
-//   - testify_yaml_fail: [Unmarshal] always fails with an error
-//   - testify_yaml_custom: [Unmarshal] is a variable. Caller must initialize it
+//   - testify_yaml_fail: [UnmarshalNew] always fails with an error
+//   - testify_yaml_custom: [UnmarshalNew] is a variable. Caller must initialize it
 //     before calling any of [github.com/stretchr/testify/assert.YAMLEq] or
 //     [github.com/stretchr/testify/assert.YAMLEqf].
 //
@@ -29,9 +29,15 @@
 // [PR #1120]: https://github.com/stretchr/testify/pull/1120
 package yaml
 
-import goyaml "gopkg.in/yaml.v3"
+import (
+	"github.com/goccy/go-yaml"
+	goyaml "gopkg.in/yaml.v3"
+)
 
-// Unmarshal is just a wrapper of [gopkg.in/yaml.v3.Unmarshal].
-func Unmarshal(in []byte, out interface{}) error {
+func UnmarshalNew(in []byte, out interface{}) error {
+	return yaml.Unmarshal(in, out)
+}
+
+func UnmarshalOld(in []byte, out interface{}) error {
 	return goyaml.Unmarshal(in, out)
 }

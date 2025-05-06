@@ -1645,7 +1645,7 @@ func (a *Assertions) YAMLEq(expected string, actual string, msgAndArgs ...interf
 	if h, ok := a.t.(tHelper); ok {
 		h.Helper()
 	}
-	return YAMLEq(a.t, expected, actual, msgAndArgs...)
+	return YAMLEqNew(a.t, expected, actual, msgAndArgs...)
 }
 
 // YAMLEqf asserts that two YAML strings are equivalent.

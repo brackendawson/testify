@@ -1821,18 +1821,36 @@ func JSONEq(t TestingT, expected string, actual string, msgAndArgs ...interface{
 	return Equal(t, expectedJSONAsInterface, actualJSONAsInterface, msgAndArgs...)
 }
 
-// YAMLEq asserts that two YAML strings are equivalent.
-func YAMLEq(t TestingT, expected string, actual string, msgAndArgs ...interface{}) bool {
+// YAMLEqNew asserts that two YAML strings are equivalent using githib.com/goccy/go-yaml
+func YAMLEqNew(t TestingT, expected string, actual string, msgAndArgs ...interface{}) bool {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
 	var expectedYAMLAsInterface, actualYAMLAsInterface interface{}
 
-	if err := yaml.Unmarshal([]byte(expected), &expectedYAMLAsInterface); err != nil {
+	if err := yaml.UnmarshalNew([]byte(expected), &expectedYAMLAsInterface); err != nil {
 		return Fail(t, fmt.Sprintf("Expected value ('%s') is not valid yaml.\nYAML parsing error: '%s'", expected, err.Error()), msgAndArgs...)
 	}
 
-	if err := yaml.Unmarshal([]byte(actual), &actualYAMLAsInterface); err != nil {
+	if err := yaml.UnmarshalNew([]byte(actual), &actualYAMLAsInterface); err != nil {
+		return Fail(t, fmt.Sprintf("Input ('%s') needs to be valid yaml.\nYAML error: '%s'", actual, err.Error()), msgAndArgs...)
+	}
+
+	return Equal(t, expectedYAMLAsInterface, actualYAMLAsInterface, msgAndArgs...)
+}
+
+// YAMLEqNew asserts that two YAML strings are equivalent using gopkg.in/yaml.v3
+func YAMLEqOld(t TestingT, expected string, actual string, msgAndArgs ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	var expectedYAMLAsInterface, actualYAMLAsInterface interface{}
+
+	if err := yaml.UnmarshalOld([]byte(expected), &expectedYAMLAsInterface); err != nil {
+		return Fail(t, fmt.Sprintf("Expected value ('%s') is not valid yaml.\nYAML parsing error: '%s'", expected, err.Error()), msgAndArgs...)
+	}
+
+	if err := yaml.UnmarshalOld([]byte(actual), &actualYAMLAsInterface); err != nil {
 		return Fail(t, fmt.Sprintf("Input ('%s') needs to be valid yaml.\nYAML error: '%s'", actual, err.Error()), msgAndArgs...)
 	}
 

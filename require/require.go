@@ -2084,7 +2084,7 @@ func YAMLEq(t TestingT, expected string, actual string, msgAndArgs ...interface{
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
-	if assert.YAMLEq(t, expected, actual, msgAndArgs...) {
+	if assert.YAMLEqNew(t, expected, actual, msgAndArgs...) {
 		return
 	}
 	t.FailNow()
