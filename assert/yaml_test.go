@@ -16,8 +16,8 @@ key: value # as yaml
 `, `{"key":"value"}`)
 	f.Add(`1: one`, `2: two`)
 	f.Fuzz(func(t *testing.T, expexted, actual string) {
-		gotNew := assert.YAMLEqNew(nopTestingT{}, expexted, actual)
 		gotOld := assert.YAMLEqOld(nopTestingT{}, expexted, actual)
-		assert.Equal(t, gotNew, gotOld)
+		gotNew := assert.YAMLEqNew(nopTestingT{}, expexted, actual)
+		assert.Equal(t, gotOld, gotNew)
 	})
 }
