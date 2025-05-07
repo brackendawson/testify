@@ -8,7 +8,7 @@ toolchain go1.24.1
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/goccy/go-yaml v1.17.1
+	github.com/goccy/go-yaml v1.17.2-0.20250507123037-4b07c0d48519
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/stretchr/objx v0.5.2
 	gopkg.in/yaml.v3 v3.0.1
